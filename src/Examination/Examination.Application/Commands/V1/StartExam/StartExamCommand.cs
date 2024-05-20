@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace Examination.Application.Commands.StartExam
+namespace Examination.Application.Commands.V1.StartExam
 {
     public class StartExamCommand : IRequest<bool>
     {
