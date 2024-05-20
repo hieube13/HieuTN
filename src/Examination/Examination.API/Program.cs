@@ -6,94 +6,138 @@ using Examination.Domain.AggregateModels.UserAggregate;
 using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using Serilog;
+using System.Reflection;
 
-var builder = WebApplication.CreateBuilder(args);
+string appName = typeof(Program).Namespace;
+var configuration = GetConfiguration();
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.WithProperty("ApplicationContext", appName)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day, shared: true)
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
 
-// builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
-
-builder.Services.AddApiVersioning(options =>
+IConfiguration GetConfiguration()
 {
-    options.ReportApiVersions = true;
-});
-builder.Services.AddVersionedApiExplorer(
-    options =>
-    {
-        // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-        // note: the specified format code will format the version as "'v'major[.minor][-status]"
-        options.GroupNameFormat = "'v'VVV";
+    var configBuilder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .AddUserSecrets(typeof(Program).Assembly);
 
-        // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-        // can also be used to control the format of the API version in route templates
-        options.SubstituteApiVersionInUrl = true;
-    }
-);
-
-builder.Services.AddSingleton<IMongoClient>(c =>
-            {
-                var user = builder.Configuration.GetValue<string>("DatabaseSettings:User");
-                var password = builder.Configuration.GetValue<string>("DatabaseSettings:Password");
-                var server = builder.Configuration.GetValue<string>("DatabaseSettings:Server");
-                var databaseName = builder.Configuration.GetValue<string>("DatabaseSettings:DatabaseName");
-                return new MongoClient(
-                    "mongodb://" + user + ":" + password + "@" + server + "/" + databaseName + "?authSource=admin");
-            });
-
-builder.Services.AddScoped(c => c.GetService<IMongoClient>()?.StartSession());
-
-builder.Services.AddAutoMapper(cfg => { cfg.AddProfile(new MappingProfile()); });
-builder.Services.AddMediatR(typeof(StartExamCommandHandler).Assembly);
-//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
-builder.Services.AddControllers();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy",
-        builder => builder
-            .SetIsOriginAllowed((host) => true)
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
-});
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API V1", Version = "v1" });
-    c.SwaggerDoc("v2", new OpenApiInfo { Title = "Examination.API V2", Version = "v2" });
-});
-builder.Services.Configure<ExamSettings>(builder.Configuration);
-
-builder.Services.AddTransient<IExamRepository, ExamRepository>();
-builder.Services.AddTransient<IExamResultRepository, ExamResultRepository>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Examination.API v1");
-        c.SwaggerEndpoint("/swagger/v2/swagger.json", "Examination.API v2");
-    });
+    var config = configBuilder.Build();
+    return config;
 }
 
-app.UseHttpsRedirection();
+Log.Information("Hello Hieu Starting up!");
 
-app.UseRouting();
-app.UseCors("CorsPolicy");
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-app.UseAuthorization();
+    builder.Host.UseSerilog();
+    builder.Services.AddEndpointsApiExplorer();
 
-app.MapControllers();
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.ReportApiVersions = true;
+    });
+    builder.Services.AddVersionedApiExplorer(
+        options =>
+        {
+            // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+            // note: the specified format code will format the version as "'v'major[.minor][-status]"
+            options.GroupNameFormat = "'v'VVV";
 
-app.Run();
+            // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+            // can also be used to control the format of the API version in route templates
+            options.SubstituteApiVersionInUrl = true;
+        }
+    );
+
+    builder.Services.AddSingleton<IMongoClient>(c =>
+    {
+        var user = builder.Configuration.GetValue<string>("DatabaseSettings:User");
+        var password = builder.Configuration.GetValue<string>("DatabaseSettings:Password");
+        var server = builder.Configuration.GetValue<string>("DatabaseSettings:Server");
+        var databaseName = builder.Configuration.GetValue<string>("DatabaseSettings:DatabaseName");
+        return new MongoClient(
+            "mongodb://" + user + ":" + password + "@" + server + "/" + databaseName + "?authSource=admin");
+    });
+
+    builder.Services.AddScoped(c => c.GetService<IMongoClient>()?.StartSession());
+
+    builder.Services.AddAutoMapper(cfg => { cfg.AddProfile(new MappingProfile()); });
+    builder.Services.AddMediatR(typeof(StartExamCommandHandler).Assembly);
+    //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+    builder.Services.AddControllers();
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy",
+            builder => builder
+                .SetIsOriginAllowed((host) => true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+    });
+
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API V1", Version = "v1" });
+        c.SwaggerDoc("v2", new OpenApiInfo { Title = "Examination.API V2", Version = "v2" });
+    });
+    builder.Services.Configure<ExamSettings>(builder.Configuration);
+
+    builder.Services.AddTransient<IExamRepository, ExamRepository>();
+    builder.Services.AddTransient<IExamResultRepository, ExamResultRepository>();
+    builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Examination.API v1");
+            c.SwaggerEndpoint("/swagger/v2/swagger.json", "Examination.API v2");
+        });
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseRouting();
+    app.UseCors("CorsPolicy");
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+
+    Log.Information("Stopped cleanly");
+    return 0;
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", appName);
+
+    return 1;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
+
+
