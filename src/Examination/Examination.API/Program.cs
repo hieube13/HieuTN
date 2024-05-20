@@ -3,6 +3,7 @@ using Examination.Application.Mapping;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.UserAggregate;
+using Examination.Infrastructure;
 using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
 using HealthChecks.UI.Client;
@@ -12,6 +13,8 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Serilog;
@@ -48,6 +51,8 @@ Log.Information("Hello Hieu Starting up!");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    builder.Configuration.AddConfiguration(configuration);
 
     builder.Host.UseSerilog();
     builder.Services.AddEndpointsApiExplorer();
@@ -126,6 +131,17 @@ try
 
 
     var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<ExamMongoDbSeeding>>();
+        var settings = services.GetRequiredService<IOptions<ExamSettings>>();
+        var mongoClient = services.GetRequiredService<IMongoClient>();
+        new ExamMongoDbSeeding()
+            .SeedAsync(mongoClient, settings, logger)
+            .Wait();
+    }
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
