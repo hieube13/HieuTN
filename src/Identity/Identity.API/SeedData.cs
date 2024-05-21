@@ -75,7 +75,10 @@ namespace Identity.API
             {
                 hieubui = new ApplicationUser
                 {
+                    Id = Guid.NewGuid().ToString(),
                     UserName = "HieuBui",
+                    LastName = "Hieu",
+                    FirstName = "Bui",
                     Email = "hieubui.chuy@email.com",
                     EmailConfirmed = true
                 };

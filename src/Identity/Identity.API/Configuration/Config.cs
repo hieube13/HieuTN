@@ -24,7 +24,7 @@ namespace Identity.API.Configuration
         {
             return new[] 
             {
-                new ApiResource("")
+                new ApiResource
                 {
                     Name = "exam_api",
                     DisplayName = "Exam API"
@@ -36,7 +36,7 @@ namespace Identity.API.Configuration
         {
             return new[]
             {
-                new ApiScope("Full_access"), 
+                new ApiScope("full_access"), 
             };
         }
 
@@ -123,8 +123,8 @@ namespace Identity.API.Configuration
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{clientUrls["ExamApi"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{clientUrls["ExamApi"]}/swagger/" },
+                    RedirectUris = { $"{clientUrls["ExamWebApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{clientUrls["ExamWebApi"]}/swagger/" },
 
                     AllowedScopes =
                         {

@@ -17,13 +17,15 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
 
 var seed = args.Contains("/seed");
 if (seed)
 {
     args = args.Except(new[] { "/seed" }).ToArray();
 }
+
+var builder = WebApplication.CreateBuilder(args);
+
 string migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -121,6 +123,8 @@ app.UseAuthentication();
 
 app.UseRouting();
 
+app.UseStaticFiles();
+
 app.UseIdentityServer();
 app.UseAuthorization();
 
@@ -153,7 +157,10 @@ app.UseEndpoints(endpoints =>
         }
     );
 
-    endpoints.MapControllers();
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
 });
 
 app.Run();
