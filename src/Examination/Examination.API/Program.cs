@@ -1,6 +1,7 @@
 using Examination.API.Filter;
-using Examination.Application.Commands.V1.StartExam;
+using Examination.Application.Commands.V1.Exams.StartExam;
 using Examination.Application.Mapping;
+using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.UserAggregate;
@@ -169,6 +170,7 @@ try
     builder.Services.AddTransient<IExamRepository, ExamRepository>();
     builder.Services.AddTransient<IExamResultRepository, ExamResultRepository>();
     builder.Services.AddTransient<IUserRepository, UserRepository>();
+    builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 
 
     var app = builder.Build();

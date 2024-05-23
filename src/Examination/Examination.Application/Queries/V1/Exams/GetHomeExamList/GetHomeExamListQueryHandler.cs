@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
-namespace Examination.Application.Queries.V1.GetHomeExamList
+namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
 {
     public class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, IEnumerable<ExamDto>>
     {
