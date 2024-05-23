@@ -8,6 +8,8 @@
     "Users": [
       {
         "Username": "admin",
+        "FirstName": "Hieu",
+        "LastName": "Bui",
         "Password": "Admin@123$",
         "Email": "admin@hieutn.com",
         "Roles": [
@@ -17,6 +19,14 @@
           {
             "Type": "name",
             "Value": "admin"
+          },
+          {
+            "Type": "given_name",
+            "Value": "Hieu"
+          },
+          {
+            "Type": "family_name",
+            "Value": "Bui"
           }
         ]
       }
