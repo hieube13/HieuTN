@@ -1,0 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Examination.Shared;
+using MediatR;
+
+namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
+{
+    public class GetHomeExamListQuery : IRequest<IEnumerable<ExamDto>>
+    {
+
+    }
+}
