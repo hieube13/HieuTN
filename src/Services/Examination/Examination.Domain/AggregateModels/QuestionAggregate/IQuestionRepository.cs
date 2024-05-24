@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Examination.Domain.SeedWork;
+using Examination.Shared.SeedWork;
 
 namespace Examination.Domain.AggregateModels.QuestionAggregate
 {
     public interface IQuestionRepository : IRepositoryBase<Question>
     {
-        Task<Tuple<List<Question>, long>> GetQuestionsPagingAsync(string searchKeyword, int pageIndex, int pageSize);
+        Task<PagedList<Question>> GetQuestionsPagingAsync(string categoryId, string searchKeyword, int pageIndex, int pageSize);
 
         Task<Question> GetQuestionsByIdAsync(string id);
     }
