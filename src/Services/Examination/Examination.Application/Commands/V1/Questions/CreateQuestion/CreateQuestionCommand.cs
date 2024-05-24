@@ -1,5 +1,6 @@
 ﻿using Examination.Shared.enums;
 using Examination.Shared.Questions;
+using Examination.Shared.SeedWork;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Questions.CreateQuestion
 {
-    public class CreateQuestionCommand : IRequest<QuestionDto>
+    public class CreateQuestionCommand : IRequest<ApiResult<QuestionDto>>
     {
         [Required]
         public string Content { get; set; }
@@ -22,7 +23,7 @@ namespace Examination.Application.Commands.V1.Questions.CreateQuestion
         public Level Level { set; get; }
 
         [Required]
-        public string CategoryId { get; set; }
+        public string? CategoryId { get; set; }
 
         [Required]
         public List<AnswerDto> Answers { set; get; } = new List<AnswerDto>();

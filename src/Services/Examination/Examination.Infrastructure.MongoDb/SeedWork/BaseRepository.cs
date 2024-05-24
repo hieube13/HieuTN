@@ -33,7 +33,7 @@ namespace Examination.Infrastructure.SeedWork
         public async Task DeleteAsync(string id)
         {
             await Collection.DeleteOneAsync(f => f.Id == id);
-        }
+        } 
 
         public async Task InsertAsync(T obj)
         {

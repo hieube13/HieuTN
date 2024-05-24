@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Shared.Categories;
+using Examination.Shared.SeedWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Categories.CreateCategory
 {
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
+    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, ApiResult<CategoryDto>>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
@@ -30,7 +31,7 @@ namespace Examination.Application.Commands.V1.Categories.CreateCategory
 
         }
 
-        public async Task<CategoryDto> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<CategoryDto>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             var itemToAdd = await _categoryRepository.GetCategoriesByNameAsync(request.Name);
             if (itemToAdd != null)
@@ -39,16 +40,9 @@ namespace Examination.Application.Commands.V1.Categories.CreateCategory
                 return null;
             }
             itemToAdd = new Category(ObjectId.GenerateNewId().ToString(), request.Name, request.UrlPath);
-            try
-            {
-                await _categoryRepository.InsertAsync(itemToAdd);
-                return _mapper.Map<Category, CategoryDto>(itemToAdd);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
+            await _categoryRepository.InsertAsync(itemToAdd);
+            var result = _mapper.Map<Category, CategoryDto>(itemToAdd);
+            return new ApiSuccessResult<CategoryDto>(result);
         }
     }
 }

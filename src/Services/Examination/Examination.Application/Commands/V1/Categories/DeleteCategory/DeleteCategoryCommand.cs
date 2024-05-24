@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Examination.Shared.SeedWork;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Categories.DeleteCategory
 {
-    public class DeleteCategoryCommand : IRequest<bool>
+    public class DeleteCategoryCommand : IRequest<ApiResult<bool>>
     {
         public DeleteCategoryCommand(string id)
         {

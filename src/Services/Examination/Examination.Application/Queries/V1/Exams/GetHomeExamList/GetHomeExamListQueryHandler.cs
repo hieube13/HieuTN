@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Shared;
+using Examination.Shared.SeedWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
 namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
 {
-    public class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, IEnumerable<ExamDto>>
+    public class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, ApiResult<IEnumerable<ExamDto>>>
     {
         private readonly IExamRepository _examRepository;
         private readonly IClientSessionHandle _clientSessionHandle;
@@ -19,11 +20,11 @@ namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
         private readonly ILogger<GetHomeExamListQueryHandler> _logger;
 
         public GetHomeExamListQueryHandler(
-            IExamRepository examRepository,
-            IMapper mapper,
-            IClientSessionHandle clientSessionHandle,
-            ILogger<GetHomeExamListQueryHandler> logger
-        )
+                IExamRepository examRepository,
+                IMapper mapper,
+                ILogger<GetHomeExamListQueryHandler> logger,
+                IClientSessionHandle clientSessionHandle
+            )
         {
             _examRepository = examRepository ?? throw new ArgumentNullException(nameof(examRepository));
             _clientSessionHandle = clientSessionHandle ?? throw new ArgumentNullException(nameof(_clientSessionHandle));
@@ -31,7 +32,7 @@ namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
             _logger = logger;
 
         }
-        public async Task<IEnumerable<ExamDto>> Handle(GetHomeExamListQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<IEnumerable<ExamDto>>> Handle(GetHomeExamListQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("BEGIN: GetHomeExamListQueryHandler");
 
@@ -39,7 +40,7 @@ namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
             var examDtos = _mapper.Map<IEnumerable<ExamDto>>(exams);
 
             _logger.LogInformation("END: GetHomeExamListQueryHandler");
-            return examDtos;
+            return new ApiSuccessResult<IEnumerable<ExamDto>>(examDtos);
         }
     }
 }

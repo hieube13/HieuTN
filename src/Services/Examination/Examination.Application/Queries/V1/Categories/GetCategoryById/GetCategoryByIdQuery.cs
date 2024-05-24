@@ -1,4 +1,5 @@
 ﻿using Examination.Shared.Categories;
+using Examination.Shared.SeedWork;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Queries.V1.Categories.GetCategoryById
 {
-    public class GetCategoryByIdQuery : IRequest<CategoryDto>
+    public class GetCategoryByIdQuery : IRequest<ApiResult<CategoryDto>>
     {
         public GetCategoryByIdQuery(string id)
         {
