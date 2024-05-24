@@ -18,7 +18,6 @@ namespace Examination.Infrastructure.SeedWork
 
         public BaseRepository(IMongoClient mongoClient,
          IOptions<ExamSettings> settings,
-         IMediator mediator,
          string collection)
         {
             _settings = settings.Value;

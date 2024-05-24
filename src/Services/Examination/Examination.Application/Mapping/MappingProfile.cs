@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Domain.AggregateModels.ExamAggregate;
+using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Shared;
 using Examination.Shared.Categories;
+using Examination.Shared.Questions;
 
 namespace Examination.Application.Mapping
 {
@@ -16,6 +18,8 @@ namespace Examination.Application.Mapping
         {
             CreateMap<Exam, ExamDto>().ReverseMap();
             CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<Question, QuestionDto>().ReverseMap();
+            CreateMap<Answer, AnswerDto>().ReverseMap();
         }
     }
 }

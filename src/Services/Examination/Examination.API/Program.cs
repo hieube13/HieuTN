@@ -5,6 +5,7 @@ using Examination.Application.Mapping;
 using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
+using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Domain.AggregateModels.UserAggregate;
 using Examination.Infrastructure;
 using Examination.Infrastructure.Repositories;
@@ -172,6 +173,9 @@ try
     builder.Services.AddTransient<IExamResultRepository, ExamResultRepository>();
     builder.Services.AddTransient<IUserRepository, UserRepository>();
     builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+    builder.Services.AddTransient<IQuestionRepository, QuestionRepository>();
+
+    //builder.Services.RegisterCustomServices();
 
     builder.Services.AddHttpContextAccessor();
 
@@ -201,6 +205,8 @@ try
     }
 
     app.UseErrorWrapping();
+
+    app.UseAuthentication();
 
     app.UseHttpsRedirection();
 

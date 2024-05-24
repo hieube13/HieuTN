@@ -14,9 +14,8 @@ namespace Examination.Infrastructure.Repositories
     {
         public ExamRepository(
             IMongoClient mongoClient,
-            IOptions<ExamSettings> settings,
-            IMediator mediator)
-        : base(mongoClient, settings, mediator, Constants.Collections.Question)
+            IOptions<ExamSettings> settings)
+        : base(mongoClient, settings, Constants.Collections.Question)
         {
         }
 

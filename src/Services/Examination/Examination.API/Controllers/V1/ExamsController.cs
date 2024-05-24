@@ -8,10 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Examination.API.Controllers.V1
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiController]
-    [ApiVersion("1.0")]
-    public class ExamsController : ControllerBase
+    public class ExamsController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly ILogger<ExamsController> _logger;

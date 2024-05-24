@@ -12,8 +12,8 @@ namespace Examination.Infrastructure.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, IMediator mediator)
-        : base(mongoClient, settings, mediator, Constants.Collections.User)
+        public UserRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings)
+        : base(mongoClient, settings, Constants.Collections.User)
         {
         }
 

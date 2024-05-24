@@ -15,9 +15,8 @@ namespace Examination.Infrastructure.Repositories
     {
         public CategoryRepository(
           IMongoClient mongoClient,
-          IOptions<ExamSettings> settings,
-          IMediator mediator)
-      : base(mongoClient, settings, mediator, Constants.Collections.Exam)
+          IOptions<ExamSettings> settings)
+      : base(mongoClient, settings, Constants.Collections.Exam)
         {
         }
 
