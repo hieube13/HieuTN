@@ -1,21 +1,22 @@
-﻿@page "/app/questions"
+﻿@page "/app/exams"
 @using AdminApp.Services.Interfaces
-@using Examination.Shared.Questions;
+@using Examination.Shared.Exams;
 @using Examination.Shared.Categories;
 @using Examination.Shared.enums;
-@inject IQuestionService QuestionService
+@inject IExamService ExamService
 @inject ICategoryService CategoryService
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Question List</MudText>
+<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Exam List</MudText>
 <MudGrid>
     <MudItem xs="12" sm="12" md="12">
         <MudCard Elevation="25" Style="height:100%;">
             <MudCardHeader>
                 <CardHeaderContent>
                     <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send"
-                               Link="/app/questions/new" Color="Color.Primary">Create</MudButton>
+                               Link="/app/exams/new" Color="Color.Primary">Create</MudButton>
 
                 </CardHeaderContent>
             </MudCardHeader>
@@ -26,7 +27,7 @@
                             <div class="d-flex" style="align-items: baseline;">
                                 <MudTextField @bind-Value="@SearchModel.Name"
                                               Immediate="true"
-                                              Placeholder="Enter queston content..."
+                                              Placeholder="Enter content..."
                                               Clearable="true"
                                               Class="mt-0 user-search-text"
                                               AdornmentIcon="@Icons.Filled.Search" />
@@ -48,17 +49,15 @@
                     <MudItem xs="12" md="12">
                         <MudTable Items="@Elements" FixedHeader="true" FixedFooter="false" Height="400px">
                             <HeaderContent>
-                                <MudTh>Content</MudTh>
+                                <MudTh>Name</MudTh>
                                 <MudTh>Level</MudTh>
-                                <MudTh>Type</MudTh>
                                 <MudTh>Category</MudTh>
                                 <MudTh>Date Create</MudTh>
                                 <MudTh></MudTh>
                             </HeaderContent>
                             <RowTemplate>
-                                <MudTd DataLabel="Name">@context.Content</MudTd>
+                                <MudTd DataLabel="Name">@context.Name</MudTd>
                                 <MudTd DataLabel="Name">@context.Level</MudTd>
-                                <MudTd DataLabel="Name">@(context.QuestionType == QuestionType.SingleSelection ? "Single" : "Multiples") </MudTd>
                                 <MudTd DataLabel="Name">@context.CategoryName</MudTd>
                                 <MudTd DataLabel="Name">@context.DateCreated.ToString("dd/MM/yyyy hh:mm")</MudTd>
                                 <MudTd>
@@ -96,10 +95,10 @@
     public bool loading = false;
 
     private string DeleteId { set; get; }
-    private List<QuestionDto> Elements = new List<QuestionDto>();
+    private List<ExamDto> Elements = new List<ExamDto>();
     public MetaData MetaData { get; set; } = new MetaData();
 
-    private QuestionSearch SearchModel = new QuestionSearch();
+    private ExamSearch SearchModel = new ExamSearch();
     private List<CategoryDto> Categories = new List<CategoryDto>();
 
 
@@ -109,7 +108,7 @@
         await FillCategories();
     }
 
-    public async Task SearchData(QuestionSearch searchModel)
+    public async Task SearchData(ExamSearch searchModel)
     {
         SearchModel = searchModel;
         await FillData();
@@ -129,9 +128,17 @@
         var result = await dialog.Result;
         if (!result.Cancelled)
         {
-            await QuestionService.DeleteAsync(DeleteId);
-            await FillCategories();
-            await FillData();
+            var deleteResult = await ExamService.DeleteAsync(DeleteId);
+            if (deleteResult.IsSuccessed)
+            {
+                await FillCategories();
+                await FillData();
+            }
+            else
+            {
+                Snackbar.Add("Delete is not success", Severity.Error);
+            }
+
         }
     }
 
@@ -149,7 +156,7 @@
         loading = true;
         try
         {
-            var pagingResponse = await QuestionService.GetQuestionsPagingAsync(SearchModel);
+            var pagingResponse = await ExamService.GetExamsPagingAsync(SearchModel);
             if (pagingResponse.IsSuccessed)
             {
                 Elements = pagingResponse.ResultObj.Items;
@@ -174,11 +181,11 @@
 
     private void NavigateToEdit(string id)
     {
-        NavigationManager.NavigateTo($"/app/questions/details/{id}");
+        NavigationManager.NavigateTo($"/app/exams/details/{id}");
     }
 
     public async Task HandleSearch()
     {
         await FillData();
     }
-}
+} 

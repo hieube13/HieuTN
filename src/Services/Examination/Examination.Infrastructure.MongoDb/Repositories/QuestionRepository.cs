@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Infrastructure.SeedWork;
+using Examination.Shared.enums;
 using Examination.Shared.SeedWork;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -43,6 +44,15 @@ namespace Examination.Infrastructure.Repositories
                 .ToListAsync();
 
             return new PagedList<Question>(items, totalRow, pageIndex, pageSize);
+        }
+
+        public async Task<List<Question>> GetRandomQuestionsForExamAsync(string categoryId, Level level, int numberOfQuestions)
+        {
+            var filter = Builders<Question>.Filter.Where(s => s.CategoryId == categoryId && s.Level == level);
+            var items = await Collection.Find(filter)
+                .Limit(numberOfQuestions)
+                .ToListAsync();
+            return items;
         }
     }
 }

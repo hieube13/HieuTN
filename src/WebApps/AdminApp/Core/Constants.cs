@@ -12,6 +12,7 @@
         public const string Dashboard = "/personal/dashboard";
         public const string Categories = "/app/categories";
         public const string Questions = "/app/questions";
+        public const string Exams = "/app/exams";
     }
 
     public class DialogMode

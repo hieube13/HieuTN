@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
+@using AdminApp.Services.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager;
+@inject IAuthService AuthService
 
 <MudThemeProvider Theme="_themeManager.Theme" />
 <MudDialogProvider FullWidth="true"
@@ -28,19 +30,18 @@
             <MudText Typo="Typo.subtitle2">Admin Dashboard</MudText>
         </MudHidden>
         <MudSpacer />
-        <MudMenu Icon="@Icons.Material.Outlined.Translate" Color="Color.Inherit" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
-                  Dense="true">
+        <MudMenu Icon="@Icons.Material.Outlined.Translate" Color="Color.Inherit" Direction="Direction.Bottom"
+                 OffsetY="true" Dense="true">
             <MudMenuItem>English</MudMenuItem>
             <MudMenuItem>Swedish</MudMenuItem>
             <MudMenuItem>Old Norse</MudMenuItem>
         </MudMenu>
-        <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
-                  Dense="true">
+        <MudMenu Icon="@Icons.Material.Outlined.Widgets" Color="Color.Inherit" Direction="Direction.Bottom"
+                 OffsetY="true" Dense="true">
             <MudMenuItem Link="https://mudblazor.com/">MudBlazor</MudMenuItem>
             <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates">Source Code</MudMenuItem>
         </MudMenu>
-        <MudMenu AnchorOrigin="Origin.TopLeft" TransformOrigin="Origin.TopLeft"
-            Dense="true" Class="mt-1 ml-4">
+        <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true" Class="mt-1 ml-4">
             <ActivatorContent>
                 <MudAvatar Image="images/avatar_jonny.jpg" />
             </ActivatorContent>
@@ -48,7 +49,7 @@
                 <PersonCard FullName="@fullName" Class="mt-n2" />
                 <MudDivider Class="mb-2" />
                 <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/personal/account" />
-                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />
+                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" OnClick="HandleLogout" />
             </ChildContent>
         </MudMenu>
     </MudAppBar>
@@ -102,7 +103,11 @@
         _themeManager = value;
         StateHasChanged();
     }
-
+    private async Task HandleLogout()
+    {
+        await AuthService.LogoutAsync();
+        NavigationManager.NavigateTo(UrlConstants.Login);
+    }
     protected override async Task OnInitializedAsync()
     {
         // https://docs.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-5.0

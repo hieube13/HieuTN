@@ -8,6 +8,7 @@ using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Shared;
 using Examination.Shared.Categories;
+using Examination.Shared.Exams;
 using Examination.Shared.Questions;
 
 namespace Examination.Application.Mapping

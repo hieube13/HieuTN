@@ -35,7 +35,7 @@ namespace Examination.Application.Commands.V1.Questions.UpdateQuestion
             if (itemToUpdate == null)
             {
                 _logger.LogError($"Item is not found {request.Id}");
-                return new ApiErrorResult<bool>($"Item is not found {request.Id}");
+                return new ApiErrorResult<bool>(400, $"Item is not found {request.Id}");
             }
 
             itemToUpdate.Content = request.Content;
@@ -50,7 +50,7 @@ namespace Examination.Application.Commands.V1.Questions.UpdateQuestion
 
             await _questionRepository.UpdateAsync(itemToUpdate);
 
-            return new ApiSuccessResult<bool>(true, "Delete successful");
+            return new ApiSuccessResult<bool>(200, true, "Delete successful");
         }
     }
 }

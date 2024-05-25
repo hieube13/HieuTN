@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Examination.Application.Queries.V1.Exams.GetHomeExamList;
+using Examination.Application.Queries.V1.Exams.GetAllExams;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Examination.API.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("2.0")]
@@ -25,9 +23,9 @@ namespace Examination.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExamList(string sample)
         {
-            var query = new GetHomeExamListQuery();
-            var queryResult = await _mediator.Send(query);
-            return Ok(queryResult);
+            var query = new GetAllExamsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
 
     }
